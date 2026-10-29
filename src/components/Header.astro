@@ -1,0 +1,41 @@
+---
+import { CONTACT_FALLBACK_URL, HEADER_BRAND, HEADER_TAGLINE, HEADER_CTA, PHONE_DISPLAY, PHONE_URL, isShown, pageText } from '../data/site';
+import { withBase } from '../utils/paths';
+---
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href={withBase('/')} aria-label="СорбентОпт — главная">
+      <svg class="brand-mark" viewBox="0 0 80 66" aria-hidden="true"><path d="M2 59 35 9l17 24 8-12 18 38H2Z"/><path d="m20 59 21-32 15 22-7 10H20Z" class="light"/><path d="m42 28 7-11 10 15-7 10-10-14Z" class="dark"/></svg>
+      <span><strong>{HEADER_BRAND}</strong><small>{HEADER_TAGLINE}</small></span>
+    </a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Открыть меню"><span></span><span></span><span></span></button>
+    <nav id="site-nav" class="site-nav" aria-label="Основная навигация">
+      <a href={withBase('/#products')}>{pageText('nav.products', 'Продукция')}</a>
+      <a href={withBase('/#applications')}>{pageText('nav.applications', 'Применение')}</a>
+      <a href={withBase('/#advantages')}>{pageText('nav.characteristics', 'Характеристики')}</a>
+      <a href={withBase('/#documents')}>{pageText('nav.documents', 'Документы')}</a>
+      <a href={withBase('/#delivery')}>{pageText('nav.delivery', 'Доставка')}</a>
+      <a href={withBase('/#contacts')}>{pageText('nav.contacts', 'Контакты')}</a>
+    </nav>
+    {isShown('phone') && (
+      <div class="header-contact">
+        <a href={PHONE_URL}>{PHONE_DISPLAY}</a>
+        <small>{pageText('nav.callHours', 'Звоните с 9:00 до 18:00')}</small>
+      </div>
+    )}
+    <a class="button button-primary header-button js-open-contact" href={CONTACT_FALLBACK_URL} target="_blank" rel="noopener">{HEADER_CTA}</a>
+  </div>
+</header>
+<script>
+  const toggle = document.querySelector('.menu-toggle');
+  const nav = document.querySelector('#site-nav');
+  toggle?.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!open));
+    nav?.classList.toggle('is-open', !open);
+  });
+  nav?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => {
+    toggle?.setAttribute('aria-expanded', 'false');
+    nav?.classList.remove('is-open');
+  }));
+</script>

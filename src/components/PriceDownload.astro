@@ -1,0 +1,15 @@
+---
+import { PRICE_DOWNLOAD_ENABLED, PRICE_DOWNLOAD_PATH, PRICE_DOWNLOAD_FILENAME, PRICE_LIST_DATE } from '../data/site';
+import { withBase } from '../utils/paths';
+interface Props { variant?: 'primary' | 'outline'; }
+const { variant = 'primary' } = Astro.props;
+---
+{PRICE_DOWNLOAD_ENABLED && (
+  <div class="price-download">
+    <a class={`button ${variant === 'outline' ? 'button-outline' : 'button-primary'}`} href={withBase(PRICE_DOWNLOAD_PATH)} download={PRICE_DOWNLOAD_FILENAME}>
+      <svg class="price-download-icon" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M10 2v10m0 0-4-4m4 4 4-4M3 15v2h14v-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Скачать прайс-лист
+    </a>
+    <small>Excel (.xlsx), актуален на {PRICE_LIST_DATE}</small>
+  </div>
+)}

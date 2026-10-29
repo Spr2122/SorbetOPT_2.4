@@ -1,0 +1,32 @@
+# Боевой сайт: статические файлы из /var/www/sorbentopt/current.
+# `current` — символическая ссылка на последнюю выложенную версию (releases/ДАТА-ВРЕМЯ).
+# Приложение SorbentOpt Manager переключает её атомарно, поэтому посетители никогда
+# не видят наполовину загруженный сайт, а откат занимает секунду.
+sorbentopt.ru {
+	encode zstd gzip
+	root * /var/www/sorbentopt/current
+
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options SAMEORIGIN
+		Referrer-Policy strict-origin-when-cross-origin
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+	}
+
+	# Файлы с хэшем в имени можно кэшировать навсегда; картинки и страницы — нет.
+	header /_astro/* Cache-Control "public, max-age=31536000, immutable"
+	header /images/* Cache-Control "public, max-age=86400"
+	header /favicon.svg Cache-Control "public, max-age=86400"
+
+	file_server
+
+	handle_errors {
+		rewrite * /404.html
+		file_server
+	}
+}
+
+www.sorbentopt.ru {
+	redir https://sorbentopt.ru{uri} permanent
+}

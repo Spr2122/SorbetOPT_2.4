@@ -1,0 +1,21 @@
+---
+import type { Product } from '../data/products';
+import { withBase } from '../utils/paths';
+const { product } = Astro.props as { product: Product };
+---
+<article class="product-card">
+  <a class="product-image" href={withBase(`/catalog/${product.slug}/`)} aria-label={`Подробнее: ${product.name}`}>
+    <img src={withBase(product.image)} alt={product.name} loading="lazy" width="700" height="520" />
+    <span class="product-photo-note" aria-hidden="true">Фото иллюстративное</span>
+    <span class="product-price-badge" aria-hidden="true">{product.priceText}</span>
+  </a>
+  <div class="product-body">
+    <h3><a href={withBase(`/catalog/${product.slug}/`)}>{product.shortName}</a></h3>
+    <dl class="product-meta">
+      <div><dt>Фракция</dt><dd>{product.fraction}</dd></div>
+      <div><dt>Упаковка</dt><dd>{product.packaging}</dd></div>
+    </dl>
+    <div class="product-bottom"><strong>{product.priceText}</strong><span>По прайсу: {product.minimum}</span></div>
+    <a class="text-link card-cta" href={withBase(`/catalog/${product.slug}/`)}>Подробнее <span aria-hidden="true">→</span></a>
+  </div>
+</article>

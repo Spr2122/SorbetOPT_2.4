@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import PriceDownload from '../../components/PriceDownload.astro';
+import { products } from '../../data/products';
+import { withBase } from '../../utils/paths';
+import { pageText } from '../../data/site';
+const title = pageText('catalog.metaTitle', 'Каталог глауконитовой продукции оптом | СорбентОпт');
+const description = pageText('catalog.metaDescription', 'Каталог глауконитовой продукции для промышленности и крупных оптовых заказчиков. Заводские цены с НДС, доставка рассчитывается отдельно.');
+---
+<BaseLayout title={title} description={description} canonical="/catalog/">
+  <Header />
+  <main id="main-content" class="catalog-page">
+    <div class="container breadcrumbs"><a href={withBase('/')}>{pageText('catalog.breadcrumbHome', 'Главная')}</a><span>/</span><span>Каталог</span></div>
+    <section class="section catalog-heading"><div class="container"><span class="eyebrow">{pageText('catalog.eyebrow', 'Каталог')}</span><h1>{pageText('catalog.title', 'Глауконитовая продукция оптом')}</h1><p>{pageText('catalog.lead', 'Сорбенты, концентраты и гранулированная продукция. Цены приведены по прайс-листу производителя с НДС, без наценки СорбентОпт; доставка в стоимость товара не входит. Фотографии носят иллюстративный характер.')}</p></div></section>
+    <section class="section"><div class="container"><div class="product-grid">{products.map((product) => <ProductCard product={product} />)}</div><PriceDownload /></div></section>
+  </main>
+  <Footer />
+</BaseLayout>

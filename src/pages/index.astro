@@ -1,0 +1,185 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ProductCard from '../components/ProductCard.astro';
+import PriceDownload from '../components/PriceDownload.astro';
+import { products, minPriceText } from '../data/products';
+import { CONTACT_FALLBACK_URL, CONTACT_CHANNELS, MANUFACTURER_CITY, PRICE_LIST_DATE, PRICE_VAT_NOTE, MANUFACTURER_NAME, PHONE_E164, EMAIL, isShown, pageText } from '../data/site';
+import { withBase, absoluteUrl } from '../utils/paths';
+
+const title = pageText('home.metaTitle', 'Глауконитовый сорбент оптом по России | СорбентОпт');
+const description = pageText('home.metaDescription', 'Глауконитовая продукция оптом для промышленных предприятий и крупных заказчиков. Цены по прайс-листу производителя с НДС, без наценки СорбентОпт; доставка рассчитывается отдельно.');
+const siteUrl = absoluteUrl('/').replace(/\/$/, '');
+const organization = {
+  '@context': 'https://schema.org', '@type': 'Organization', name: 'СорбентОпт', url: siteUrl,
+  logo: absoluteUrl('/favicon.svg'), ...(isShown('phone') ? { telephone: PHONE_E164 } : {}), ...(isShown('email') ? { email: EMAIL } : {}), areaServed: 'RU'
+};
+const website = { '@context': 'https://schema.org', '@type': 'WebSite', name: 'СорбентОпт', url: siteUrl, inLanguage: 'ru-RU' };
+const faqItems = [
+  {
+    question: pageText('home.faq1Question', 'Как подобрать подходящую продукцию?'),
+    answer: pageText('home.faq1Answer', 'Подбор зависит от технической задачи, требуемой фракции, характеристик материала и условий применения. Направьте техническое задание или описание задачи — поможем определить подходящую позицию и уточнить её параметры у производителя.')
+  },
+  {
+    question: pageText('home.faq2Question', 'Кто поставщик и по каким ценам продаётся продукция?'),
+    answer: pageText('home.faq2Answer', `СорбентОпт помогает подобрать продукцию ${MANUFACTURER_NAME} (${MANUFACTURER_CITY}) и согласовать условия поставки. Цены на сайте приведены по заводскому прайс-листу, включают НДС и не содержат наценки со стороны СорбентОпт. Договор поставки заключается непосредственно с производителем, оплата перечисляется производителю. Доставка оформляется производителем и оплачивается отдельно.`)
+  },
+  {
+    question: pageText('home.faq3Question', 'Какой минимальный объём заказа?'),
+    answer: pageText('home.faq3Answer', 'В прайс-листе указаны условия для партий от 10 до 1000 тонн. Возможность поставки другого объёма и итоговую цену необходимо согласовать с производителем.')
+  },
+  {
+    question: pageText('home.faq4Question', 'Как рассчитывается доставка?'),
+    answer: pageText('home.faq4Answer', 'Доставку организует и оформляет производитель. Её стоимость не включена в цену продукции и рассчитывается отдельно с учётом объёма, упаковки, адреса и выбранного способа перевозки. Доступные маршруты и варианты отгрузки уточняются при согласовании заказа.')
+  },
+  {
+    question: pageText('home.faq5Question', 'Какие документы предоставляются на продукцию?'),
+    answer: pageText('home.faq5Answer', 'Перечень доступных документов зависит от конкретной позиции. По запросу уточним у производителя, какие паспорта, сертификаты, декларации или протоколы испытаний доступны для выбранной продукции.')
+  },
+  {
+    question: pageText('home.faq6Question', 'Фотографии на сайте — это реальная партия товара?'),
+    answer: pageText('home.faq6Answer', 'Нет, фотографии на сайте иллюстративные. Точный внешний вид, цвет и фракцию конкретной партии уточняйте у поставщика перед заказом.')
+  }
+];
+const faqSchema = {
+  '@context': 'https://schema.org', '@type': 'FAQPage',
+  mainEntity: faqItems.map((item) => ({
+    '@type': 'Question', name: item.question,
+    acceptedAnswer: { '@type': 'Answer', text: item.answer }
+  }))
+};
+---
+<BaseLayout title={title} description={description} canonical="/" schema={[organization, website, faqSchema]}>
+  <Header />
+  <main id="main-content">
+    <section class="hero" style={`--hero-bg:url(${withBase('/images/hero.webp')})`} aria-labelledby="hero-title">
+      <div class="container hero-content">
+        <div class="hero-copy">
+          <span class="eyebrow eyebrow-light">{pageText('home.heroEyebrow', 'Природный минерал')}</span>
+          <h1 id="hero-title">{pageText('home.heroTitle', 'Глауконитовый сорбент оптом по России')}</h1>
+          <p class="hero-lead">{pageText('home.heroLead', 'Глауконитовая продукция для промышленных предприятий и крупных оптовых заказчиков. Помогаем подобрать позицию по техническому заданию и согласовать поставку с производителем.')}</p>
+          <ul class="hero-facts">
+            <li><span class="fact-icon">✓</span>{pageText('home.heroFact1', 'Разные фракции и виды продукции')}</li>
+            <li><span class="fact-icon">✓</span>{pageText('home.heroFact2', 'Цены по прайс-листу производителя, без наценки СорбентОпт')}</li>
+            <li><span class="fact-icon">✓</span>{pageText('home.heroFact3', 'Поставка от 10 тонн')}</li>
+            <li><span class="fact-icon">✓</span>{pageText('home.heroFact4', 'Доставка оформляется производителем отдельно')}</li>
+          </ul>
+          <div class="hero-actions"><a class="button button-primary js-open-contact" href={CONTACT_FALLBACK_URL} target="_blank" rel="noopener">{pageText('home.heroContact', 'Связаться с нами')}</a><a class="button button-outline-light" href="#products">{pageText('home.heroCatalog', 'Смотреть продукцию')}</a></div>
+        </div>
+        <aside class="hero-price" aria-label="Условия поставки"><small>Цена по прайсу от</small><strong>{minPriceText}</strong><span>Поставка<br />от 10 тонн</span></aside>
+      </div>
+    </section>
+
+    <section class="section" id="products" aria-labelledby="products-title">
+      <div class="container">
+        <div class="section-heading split"><div><span class="eyebrow">{pageText('home.productsEyebrow', 'Наша продукция')}</span><h2 id="products-title">{pageText('home.productsTitle', 'Глауконитовая продукция оптом')}</h2><p>{pageText('home.productsLead', 'Основные позиции, фракции и формы выпуска. Цены приведены по прайс-листу производителя с НДС; доставка в стоимость продукции не входит.')}</p></div><a class="text-link" href={withBase('/catalog/')}>{pageText('home.catalogLink', 'Весь каталог')} <span aria-hidden="true">→</span></a></div>
+        <div class="product-grid">{products.map((product) => <ProductCard product={product} />)}</div>
+        <p class="notice price-notice">Прайс-лист производителя {MANUFACTURER_NAME} на {PRICE_LIST_DATE}. Цены указаны с НДС и без наценки со стороны СорбентОпт. Доставка рассчитывается и оформляется производителем отдельно. {PRICE_VAT_NOTE} Информация не является публичной офертой (ст. 437 ГК РФ). Для марки ГР сезонность цены и возможность отгрузки необходимо подтвердить у производителя.</p>
+        <PriceDownload />
+      </div>
+    </section>
+
+    <section class="section section-muted" id="applications" aria-labelledby="applications-title">
+      <div class="container">
+        <div class="section-heading"><span class="eyebrow">{pageText('home.applicationsEyebrow', 'Применение')}</span><h2 id="applications-title">{pageText('home.applicationsTitle', 'Где используется глауконит')}</h2><p>{pageText('home.applicationsLead', 'Глауконит выпускается в разных формах и используется в нескольких отраслях. Конкретное назначение зависит от марки, фракции и документации на товар.')}</p></div>
+        <div class="application-grid">
+          <article><span class="application-number">01</span><h3>{pageText('home.app1Title', 'Нефтепродукты и промышленность')}</h3><p>{pageText('home.app1Body', 'Сорбция нефтепродуктов и использование минеральных сорбентов в промышленных процессах — при соответствии выбранной марки задаче.')}</p></article>
+          <article><span class="application-number">02</span><h3>{pageText('home.app2Title', 'Экология и почвы')}</h3><p>{pageText('home.app2Body', 'Экологические проекты, включая работы с загрязнёнными почвами и восстановление территорий, по проектным требованиям.')}</p></article>
+          <article><span class="application-number">03</span><h3>{pageText('home.app3Title', 'Водоподготовка и очистка')}</h3><p>{pageText('home.app3Body', 'Сорбционные материалы для отдельных задач очистки сточных и оборотных вод; пригодность для конкретной системы подтверждается отдельно.')}</p></article>
+          <article><span class="application-number">04</span><h3>{pageText('home.app4Title', 'Сельское хозяйство')}</h3><p>{pageText('home.app4Body', 'Глауконитовые материалы могут применяться в агротехнических проектах и производстве минеральных смесей — с учётом назначения конкретного продукта.')}</p></article>
+          <article><span class="application-number">05</span><h3>{pageText('home.app5Title', 'Кормовые цели')}</h3><p>{pageText('home.app5Body', 'Отдельные позиции заявлены производителем для кормовых целей. Перед применением необходимо проверить документы и соответствие требованиям к кормовой продукции.')}</p></article>
+          <article><span class="application-number">06</span><h3>{pageText('home.app6Title', 'Гранулированные сорбенты')}</h3><p>{pageText('home.app6Body', 'Гранулированные формы рассматривают для фильтрующих и сорбционных процессов, если физические характеристики соответствуют условиям эксплуатации.')}</p></article>
+          <article><span class="application-number">07</span><h3>{pageText('home.app7Title', 'Подбор под техническое задание')}</h3><p>{pageText('home.app7Body', 'Сопоставим заявленные характеристики продукции с требованиями вашего производственного процесса.')}</p></article>
+          <article><span class="application-number">08</span><h3>{pageText('home.app8Title', 'Специализированные задачи')}</h3><p>{pageText('home.app8Body', 'Возможность применения в конкретной сфере следует подтвердить документацией производителя и требованиями к конечному продукту.')}</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="advantages" aria-labelledby="advantages-title">
+      <div class="container">
+        <div class="feature-layout">
+          <figure class="feature-image"><img src={withBase('/images/mineral.webp')} alt="Природный глауконит — минеральное сырьё" loading="lazy" width="900" height="700" /><figcaption>{pageText('home.imageCaption', 'Природное минеральное сырьё')}</figcaption></figure>
+          <div><span class="eyebrow">{pageText('home.whyEyebrow', 'Почему глауконит')}</span><h2 id="advantages-title">{pageText('home.advantagesTitle', 'Свойства и преимущества материала')}</h2><p class="section-intro">{pageText('home.advantagesLead', 'Характеристики глауконитовой продукции различаются в зависимости от позиции, фракции и обработки. При выборе следует ориентироваться на спецификацию конкретного товара и требования вашей технологии.')}</p><div class="advantage-list">
+            <article><strong>{pageText('home.adv1Title', 'Позиции разного типа')}</strong><p>{pageText('home.adv1Body', 'В каталоге представлены сорбенты, концентраты и гранулированная продукция.')}</p></article>
+            <article><strong>{pageText('home.adv2Title', 'Подбор по параметрам')}</strong><p>{pageText('home.adv2Body', 'Помогаем сверить фракцию, упаковку и доступную документацию с задачей заказчика.')}</p></article>
+            <article><strong>{pageText('home.adv3Title', 'Оптовые объёмы')}</strong><p>{pageText('home.adv3Body', 'Прайс-лист предусматривает партии от 10 до 1000 тонн; другие объёмы согласуются отдельно.')}</p></article>
+            <article><strong>{pageText('home.adv4Title', 'Документы по запросу')}</strong><p>{pageText('home.adv4Body', 'Состав документации зависит от выбранной позиции и уточняется у производителя.')}</p></article>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-muted" id="specs" aria-labelledby="specs-title">
+      <div class="container">
+        <div class="section-heading"><span class="eyebrow">{pageText('home.specsEyebrow', 'Характеристики')}</span><h2 id="specs-title">{pageText('home.specsTitle', 'Характеристики продукции')}</h2><p>{pageText('home.specsLead', 'Точный состав, физико-химические показатели и назначение зависят от конкретной позиции и партии. Перед применением ориентируйтесь на актуальную техническую документацию производителя.')}</p></div>
+        <div class="feature-layout">
+          <div class="specification-block">
+            <h3>{pageText('home.specsTableTitle', 'Справочные показатели сорбента')}</h3>
+            <p class="section-intro">{pageText('home.specsTableIntro', 'В опубликованных технических материалах производителя для сорбента фракции 0,1–0,6 мм приведены следующие показатели. Это справочные данные для указанной фракции, а не универсальная спецификация всех позиций каталога.')}</p>
+            <div class="spec-table-wrap"><table class="spec-table"><tbody>
+              <tr><th scope="row">Насыпная плотность</th><td>1300–1400 кг/м³</td></tr>
+              <tr><th scope="row">Удельная поверхность</th><td>180–200 м²/г</td></tr>
+              <tr><th scope="row">Межзерновая пористость</th><td>60–72%</td></tr>
+              <tr><th scope="row">Ёмкость по нефтепродуктам</th><td>200–220 мг/г</td></tr>
+              <tr><th scope="row">Ёмкость по фенолу</th><td>1000 мг/г</td></tr>
+              <tr><th scope="row">Коэффициент распределения по стронцию-90</th><td>214 мл/г</td></tr>
+              <tr><th scope="row">Коэффициент распределения по цезию-137</th><td>2,61 × 10³ мл/г</td></tr>
+              <tr><th scope="row">Сорбционная способность по тяжёлым металлам</th><td>до 80%</td></tr>
+              <tr><th scope="row">Фракционный состав для этих показателей</th><td>0,1–0,6 мм</td></tr>
+            </tbody></table></div>
+            <p class="notice">{pageText('home.specsNote', 'Показатели зависят от вида продукции и условий испытаний. Не используйте эти значения для другой фракции или марки без подтверждения в техническом паспорте конкретного товара. Для проектных расчётов запросите актуальную спецификацию и методику испытаний.')}</p>
+          </div>
+          <div><span class="eyebrow">{pageText('home.specsSelectEyebrow', 'Подбор продукции')}</span><h3>{pageText('home.specsSelectTitle', 'Что уточнить перед заказом')}</h3><p class="section-intro">{pageText('home.specsSelectBody', 'Сообщите задачу, требуемую фракцию, объём, упаковку и место доставки. Это поможет подобрать подходящую позицию и получить расчёт товара и перевозки отдельными строками.')}</p><div class="advantage-list">
+            <article><strong>{pageText('home.specsSelect1Title', 'Фракция и форма выпуска')}</strong><p>{pageText('home.specsSelect1Body', 'Сопоставляются с требованиями оборудования и технологического процесса.')}</p></article>
+            <article><strong>{pageText('home.specsSelect2Title', 'Состав и свойства')}</strong><p>{pageText('home.specsSelect2Body', 'Подтверждаются паспортом или спецификацией на конкретную продукцию.')}</p></article>
+            <article><strong>{pageText('home.specsSelect3Title', 'Документация и назначение')}</strong><p>{pageText('home.specsSelect3Body', 'Перечень документов и допустимые области применения зависят от выбранной позиции.')}</p></article>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="producer" style={`--producer-bg:url(${withBase('/images/production.webp')})`} aria-labelledby="producer-title">
+      <div class="container producer-inner"><div><span class="eyebrow eyebrow-light">Поставки</span><h2 id="producer-title">{pageText('home.supplyTitle', 'Поставка продукции по заводскому прайс-листу')}</h2><p>{pageText('home.supplyBody', `СорбентОпт помогает промышленным предприятиям и оптовым покупателям подобрать продукцию ${MANUFACTURER_NAME} (${MANUFACTURER_CITY}) и согласовать условия поставки. Цена товара соответствует заводскому прайс-листу, включает НДС и не содержит наценки со стороны СорбентОпт. Договор поставки и оплату покупатель оформляет непосредственно с производителем. Доставку организует и оформляет производитель; её стоимость рассчитывается отдельно. Направьте техническое задание, требуемый объём и город назначения — уточним доступные варианты.`)}</p>
+        <a class="button button-light js-open-contact" href={CONTACT_FALLBACK_URL} target="_blank" rel="noopener">{pageText('home.supplyButton', 'Обсудить поставку')}</a></div></div>
+    </section>
+
+    <section class="section" id="documents" aria-labelledby="documents-title">
+      <div class="container">
+        <div class="section-heading"><span class="eyebrow">Документы и логистика</span><h2 id="documents-title">{pageText('home.documentsTitle', 'Документация и доставка')}</h2></div>
+        <div class="info-grid">
+          <article class="info-card"><img src={withBase('/images/documents.webp')} alt="Техническая документация на минеральную продукцию" loading="lazy" width="700" height="500" /><div><span class="eyebrow">{pageText('home.docsEyebrow', 'Документы')}</span><h3>{pageText('home.documentsCardTitle', 'Документация на продукцию')}</h3><p>{pageText('home.documentsBody', 'Состав доступной документации зависит от позиции. По запросу уточним у производителя наличие технического паспорта, сертификата или декларации соответствия, паспорта безопасности и протоколов испытаний — если такие документы предусмотрены для выбранного товара.')}</p><a class="button button-primary js-open-contact" href={CONTACT_FALLBACK_URL} target="_blank" rel="noopener">{pageText('home.documentsButton', 'Запросить документы')}</a></div></article>
+          <article class="info-card" id="delivery"><img src={withBase('/images/delivery-map.webp')} alt="Доставка глауконитовой продукции по России" loading="lazy" width="700" height="500" /><div><span class="eyebrow">{pageText('home.deliveryEyebrow', 'Логистика')}</span><h3>{pageText('home.deliveryTitle', 'Доставка по России')}</h3><p>{pageText('home.deliveryBody', 'Доставку организует и оформляет производитель. Стоимость не включена в цену продукции и рассчитывается отдельно с учётом объёма, упаковки, места назначения и доступного способа перевозки. Конкретный маршрут и условия отгрузки подтверждаются при согласовании заказа.')}</p><a class="button button-primary js-open-contact" href={CONTACT_FALLBACK_URL} target="_blank" rel="noopener">{pageText('home.deliveryButton', 'Рассчитать доставку')}</a></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="faq" aria-labelledby="faq-title">
+      <div class="container narrow">
+        <div class="section-heading"><span class="eyebrow">Вопросы</span><h2 id="faq-title">{pageText('home.faqTitle', 'Частые вопросы')}</h2></div>
+        <div class="faq-list">
+          {faqItems.map((item) => (
+            <details class="faq-item">
+              <summary>{item.question}</summary>
+              <p>{item.answer}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-muted" id="contacts" aria-labelledby="contacts-title">
+      <div class="container contacts-inner">
+        <span class="eyebrow">{pageText('home.contactsEyebrow', 'Как заказать')}</span>
+        <h2 id="contacts-title">{pageText('home.contactsTitle', 'Свяжитесь с нами')}</h2>
+        <p>{pageText('home.contactsBody', 'Напишите или позвоните, указав наименование продукции, требуемый объём, техническую задачу и город доставки. Поможем уточнить характеристики и получить от производителя расчёт стоимости товара и доставки отдельными позициями.')}</p>
+        <ul class="contacts-channel-list">
+          {CONTACT_CHANNELS.map((channel) => (
+            <li><a href={channel.url} target="_blank" rel="noopener">{channel.label}<span>{channel.value}</span></a></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>

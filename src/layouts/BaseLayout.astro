@@ -1,0 +1,53 @@
+---
+import '../styles/global.css';
+import ContactWidget from '../components/ContactWidget.astro';
+import { withBase, absoluteUrl } from '../utils/paths';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  ogImage?: string;
+  noindex?: boolean;
+  schema?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const { title, description, canonical = '/', ogImage = '/images/hero.webp', noindex = import.meta.env.PUBLIC_NOINDEX === '1', schema } = Astro.props;
+const canonicalUrl = absoluteUrl(canonical);
+const ogImageUrl = absoluteUrl(ogImage);
+const schemas = Array.isArray(schema) ? schema : schema ? [schema] : [];
+---
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#123f34" />
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'} />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <title>{title}</title>
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:site_name" content="СорбентОпт" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    {schemas.map((item) => <script type="application/ld+json" set:html={JSON.stringify(item)} />)}
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Перейти к содержанию</a>
+    <slot />
+    <ContactWidget />
+  </body>
+</html>

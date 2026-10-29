@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import { products } from '../../../data/products';
+import PriceDownload from '../../../components/PriceDownload.astro';
+import { CONTACT_FALLBACK_URL, PRICE_LIST_DATE, PRICE_VAT_NOTE, pageText } from '../../../data/site';
+import { withBase, absoluteUrl } from '../../../utils/paths';
+import { settings } from '../../../data/site';
+
+export function getStaticPaths() {
+  return products.map((product) => ({ params: { slug: product.slug }, props: { product } }));
+}
+const { product } = Astro.props;
+const title = product.seoTitle || `${product.name} — цена и поставка | СорбентОпт`;
+const description = product.seoDescription || `${product.name}. Фракция ${product.fraction}, упаковка ${product.packaging}. Цена по прайс-листу производителя с НДС; доставка рассчитывается отдельно. Оптовая поставка по согласованию.`;
+const pageUrl = absoluteUrl(`/catalog/${product.slug}/`);
+const productSchema = {
+  '@context': 'https://schema.org', '@type': 'Product', name: product.name, sku: product.slug,
+  description: product.description, image: [absoluteUrl(product.image)], url: pageUrl,
+  brand: { '@type': 'Brand', name: 'СорбентОпт' },
+  ...(product.price !== null ? { offers: { '@type': 'Offer', priceCurrency: 'RUB', price: product.price, ...(settings.priceValidUntil ? { priceValidUntil: settings.priceValidUntil } : {}), url: pageUrl, priceSpecification: { '@type': 'UnitPriceSpecification', price: product.price, priceCurrency: 'RUB', valueAddedTaxIncluded: true, referenceQuantity: { '@type': 'QuantitativeValue', value: 1, unitCode: 'TNE' } } } } : {})
+};
+---
+<BaseLayout title={title} description={description} canonical={`/catalog/${product.slug}/`} ogImage={product.image} schema={productSchema}>
+  <Header />
+  <main id="main-content">
+    <div class="container breadcrumbs"><a href={withBase('/')}>{pageText('catalog.breadcrumbHome', 'Главная')}</a><span>/</span><a href={withBase('/catalog/')}>Каталог</a><span>/</span><span>{product.shortName}</span></div>
+    <section class="section product-detail"><div class="container product-detail-grid">
+      <figure class="detail-image"><img src={withBase(product.image)} alt={product.name} width="1000" height="740" /><figcaption>Изображение носит иллюстративный характер. Характеристики и внешний вид конкретной партии подтверждаются производителем.</figcaption></figure>
+      <div class="detail-copy"><span class="eyebrow">{pageText('catalog.detailEyebrow', 'Глауконитовая продукция')}</span><h1>{product.name}</h1><p class="detail-description">{product.description}</p>
+        <dl class="spec-list"><div><dt>Фракция</dt><dd>{product.fraction}</dd></div><div><dt>Упаковка</dt><dd>{product.packaging}</dd></div><div><dt>Объём по прайс-листу</dt><dd>{product.minimum}</dd></div><div><dt>Цена</dt><dd>{product.priceText}</dd></div></dl>
+        <p class="notice price-notice">Цена приведена по заводскому прайс-листу на {PRICE_LIST_DATE}, с учётом НДС и без наценки со стороны СорбентОпт. Доставка в цену не входит: её отдельно рассчитывает и оформляет производитель. {PRICE_VAT_NOTE} Информация не является публичной офертой (ст. 437 ГК РФ); актуальность цены, наличие и характеристики уточняются при согласовании заказа.</p>
+        <a class="button button-primary js-open-contact" href={CONTACT_FALLBACK_URL} target="_blank" rel="noopener">{pageText('catalog.contactButton', 'Связаться с нами')}</a>
+        <PriceDownload variant="outline" />
+      </div>
+    </div></section>
+    <section class="section section-muted"><div class="container narrow"><span class="eyebrow">{pageText('catalog.applicationEyebrow', 'Применение')}</span><h2>{pageText('catalog.applicationTitle', 'Возможные области применения')}</h2><ul class="application-list">{product.applications.map((item) => <li>{item}</li>)}</ul><p class="notice">Перечень областей применения носит справочный характер. Возможность использования выбранной позиции следует подтвердить по документации производителя и требованиям конкретной технологии.</p></div></section>
+  </main>
+  <Footer />
+</BaseLayout>

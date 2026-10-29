@@ -1,0 +1,37 @@
+---
+import { CONTACT_CHANNELS, FOOTER_BRAND, FOOTER_TAGLINE, FOOTER_ABOUT, FOOTER_REQUISITES, FOOTER_DISCLAIMER, FOOTER_COPYRIGHT, FOOTER_POLICY_LABEL, pageText } from '../data/site';
+import { withBase } from '../utils/paths';
+---
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand footer-brand" href={withBase('/')} aria-label="СорбентОпт — главная">
+          <svg class="brand-mark" viewBox="0 0 80 66" aria-hidden="true"><path d="M2 59 35 9l17 24 8-12 18 38H2Z"/><path d="m20 59 21-32 15 22-7 10H20Z" class="light"/><path d="m42 28 7-11 10 15-7 10-10-14Z" class="dark"/></svg>
+          <span><strong>{FOOTER_BRAND}</strong><small>{FOOTER_TAGLINE}</small></span>
+        </a>
+        <p class="footer-note">{FOOTER_ABOUT}</p>
+        <p class="footer-note footer-legal"><strong>Контакты и реквизиты:</strong>{FOOTER_REQUISITES.map((line) => (<><br />{line}</>))}</p>
+      </div>
+      <nav class="footer-nav" aria-label="Навигация в подвале">
+        <a href={withBase('/#products')}>{pageText('nav.products', 'Продукция')}</a>
+        <a href={withBase('/#applications')}>{pageText('nav.applications', 'Применение')}</a>
+        <a href={withBase('/#advantages')}>{pageText('nav.characteristics', 'Характеристики')}</a>
+        <a href={withBase('/#documents')}>{pageText('nav.documents', 'Документы')}</a>
+        <a href={withBase('/#delivery')}>{pageText('nav.delivery', 'Доставка')}</a>
+        <a href={withBase('/#contacts')}>{pageText('nav.contacts', 'Контакты')}</a>
+      </nav>
+      <div class="footer-contact">
+        {CONTACT_CHANNELS.map((channel) => (
+          <a href={channel.url} target="_blank" rel="noopener">{channel.label}: {channel.value}</a>
+        ))}
+        <span>Россия</span>
+      </div>
+    </div>
+    <p class="footer-disclaimer">{FOOTER_DISCLAIMER}</p>
+    <div class="footer-bottom">
+      <span>{FOOTER_COPYRIGHT}</span>
+      <span><a href={withBase('/privacy/')}>{FOOTER_POLICY_LABEL}</a></span>
+    </div>
+  </div>
+</footer>
